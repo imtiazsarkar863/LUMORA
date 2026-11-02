@@ -8,6 +8,7 @@ html, body {
   scroll-behavior: auto;
   overflow-x: hidden;
   overflow-y: auto;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* Hide default cursor on desktop for custom festive cursor */
@@ -17,23 +18,20 @@ html, body {
   }
 }
 
-/* Strictly locks scrolling during intro animation */
+/* Locks scrolling during Section 1 intro sequence */
 html.no-scroll, 
 body.no-scroll {
   overflow: hidden !important;
-  height: 100vh !important;
+  height: 100dvh !important;
 }
 
 .page-wrapper {
   width: 100%;
   position: relative;
   background: #080808;
-  min-height: 300vh;
+  min-height: 300dvh;
 }
 
-/* =========================================
-   CUSTOM DYNAMIC CURSOR
-   ========================================= */
 
 .custom-cursor-container {
   position: fixed;
@@ -120,27 +118,72 @@ body.no-scroll {
   animation: flameFlicker 1.2s infinite alternate ease-in-out;
 }
 
-/* Atmospheric Flash overlay */
+
+@media (hover: none) and (pointer: coarse) {
+  
+  .custom-cursor-container {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  
+  .custom-cursor-container.active-drag {
+    opacity: 1 !important;
+  }
+
+  
+  .custom-cursor-container.mode-match .golden-cursor {
+    display: none;
+  }
+
+  .custom-cursor-container.mode-match .matchstick-cursor {
+    display: block;
+    transform: translate(-4px, -8px) rotate(-26deg) scale(1.2);
+  }
+
+  
+  .custom-cursor-container.mode-pointer .matchstick-cursor {
+    display: none;
+  }
+
+  .custom-cursor-container.mode-pointer .golden-cursor {
+    display: block !important;
+    transform: scale(1.15);
+  }
+}
+
+
+
 .ambient-flash {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 235, 175, 0.45) 0%, rgba(255, 150, 40, 0.15) 45%, transparent 75%);
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
   pointer-events: none;
-  z-index: 20;
-  visibility: hidden;
+
+  background: radial-gradient(
+    circle at center,
+    #fff5cf 0%,
+    #f1d88d 35%,
+    #efbe64 70%,
+    #e8ac4b 100%
+  );
+
   opacity: 0;
+  visibility: hidden;
 }
 
-/* =========================================
-   HANGING LIGHTS (8 CANOPY LAMPS)
-   ========================================= */
+
+
 
 .hanging-lights-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   pointer-events: none;
   z-index: 25;
 }
@@ -155,15 +198,21 @@ body.no-scroll {
   animation: gentleSway 5s ease-in-out infinite alternate;
 }
 
-.lamp-1 { left: 2.5%; height: 38vh; animation-duration: 4.8s; }
-.lamp-2 { left: 7.5%; height: 22vh; animation-duration: 5.5s; animation-delay: -1.2s; }
-.lamp-3 { left: 13%; height: 32vh; animation-duration: 4.3s; animation-delay: -2.4s; }
-.lamp-4 { left: 18.5%; height: 18vh; animation-duration: 5.8s; animation-delay: -0.7s; }
+.lamp-1 { left: 2.5%; height: 38dvh; animation-duration: 4.8s; }
+.lamp-2 { left: 7.5%; height: 22dvh; animation-duration: 5.5s; animation-delay: -1.2s; }
+.lamp-3 { left: 13%; height: 32dvh; animation-duration: 4.3s; animation-delay: -2.4s; }
+.lamp-4 { left: 18.5%; height: 18dvh; animation-duration: 5.8s; animation-delay: -0.7s; }
 
-.lamp-5 { right: 18.5%; height: 20vh; animation-duration: 5.4s; animation-delay: -1.6s; }
-.lamp-6 { right: 13%; height: 34vh; animation-duration: 4.6s; animation-delay: -2.9s; }
-.lamp-7 { right: 7.5%; height: 24vh; animation-duration: 5.1s; animation-delay: -0.9s; }
-.lamp-8 { right: 2.5%; height: 42vh; animation-duration: 4.4s; animation-delay: -2.1s; }
+.lamp-5 { right: 18.5%; height: 20dvh; animation-duration: 5.4s; animation-delay: -1.6s; }
+.lamp-6 { right: 13%; height: 34dvh; animation-duration: 4.6s; animation-delay: -2.9s; }
+.lamp-7 { right: 7.5%; height: 24dvh; animation-duration: 5.1s; animation-delay: -0.9s; }
+.lamp-8 { right: 2.5%; height: 42dvh; animation-duration: 4.4s; animation-delay: -2.1s; }
+
+@media (max-width: 600px) {
+  .lamp-3, .lamp-4, .lamp-5, .lamp-6 {
+    display: none; 
+  }
+}
 
 @keyframes gentleSway {
   0% { transform: rotate(-2.2deg); }
@@ -239,14 +288,20 @@ body.no-scroll {
   opacity: 1;
 }
 
-/* =========================================
-   SECTION 1: HERO VIEWPORT
-   ========================================= */
 
 .hero-section {
   position: relative;
-  height: 100vh;
+  min-height: 100dvh;
   width: 100%;
+
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)),
+    url('/background.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -254,20 +309,21 @@ body.no-scroll {
   align-items: center;
   text-align: center;
 }
-
 .intro-text {
   position: relative;
   text-align: center;
   z-index: 2;
+      top: -70px;
 }
 
 .hero-section h1 {
   font-family: "Copperplate", "Copperplate Gothic Light", "Times New Roman", serif;
-  font-size: clamp(2.4rem, 6vw, 5rem);
-  font-weight: 300;
-  letter-spacing: 0.18em;
+  font-size: clamp(2.4rem, 5.5vw, 5rem);
+  font-weight: 100;
+  letter-spacing: 0.20em;
   padding-left: 0.18em;
   margin: 0;
+  top: 200px;
 }
 
 .hero-section p {
@@ -293,60 +349,98 @@ body.no-scroll {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 80px;
+  width: 14px;
+  height: 90px;
   visibility: hidden;
   opacity: 0;
   z-index: 10;
   pointer-events: none;
 }
 
-.firecracker-head {
+.rocket-body {
   position: absolute;
-  bottom: 0;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 
-    0 0 6px #ffffff,
-    0 0 14px #ffd700,
-    0 0 28px #ff7a00;
-  z-index: 2;
+  width: 5px;
+  height: 42px;
+  background: linear-gradient(to bottom, #d4af37, #8a1f11, #300c07);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(255, 120, 0, 0.4);
 }
 
-.firecracker-glow {
+.rocket-nozzle {
   position: absolute;
   bottom: -4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 22px;
-  height: 22px;
+  width: 7px;
+  height: 4px;
+  background: #2b1103;
+  border-radius: 1px 1px 2px 2px;
+}
+
+.firecracker-head {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+}
+
+.fuse-core {
+  position: absolute;
+  inset: 2px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 230, 140, 0.9) 0%, rgba(255, 120, 0, 0.3) 60%, transparent 80%);
-  filter: blur(1px);
+  background: #ffffff;
+  box-shadow: 
+    0 0 8px #ffffff,
+    0 0 16px #ffd700,
+    0 0 32px #ff4500;
+  animation: fuseFlicker 0.08s infinite alternate ease-in-out;
+}
+
+.fuse-spark {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #ffe38a;
+  box-shadow: 0 0 6px #ffd700;
+}
+
+.fuse-1 { top: -2px; left: 2px; animation: sparkSpit 0.2s infinite ease-out; }
+.fuse-2 { bottom: 0px; right: 2px; animation: sparkSpit 0.15s infinite ease-out 0.05s; }
+
+@keyframes fuseFlicker {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  100% { transform: scale(1.2); opacity: 1; filter: drop-shadow(0 0 12px #ff8800); }
+}
+
+@keyframes sparkSpit {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(calc((var(--rnd, 1) - 0.5) * 16px), -10px) scale(0); opacity: 0; }
 }
 
 .exhaust-stream {
   position: absolute;
-  bottom: 8px;
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
-  width: 1px;
-  height: 70px;
+  width: 2px;
+  height: 75px;
 }
 
 .drop-spark {
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #ffe38a;
-  box-shadow: 0 0 6px #ffae00, 0 0 10px #ff5500;
+  left: 50%;
+  width: 3.5px;
+  height: 8px;
+  border-radius: 2px;
+  background: linear-gradient(to top, #ffffff, #ffd000 60%, #ff3b00);
+  box-shadow: 0 0 8px #ff7b00, 0 0 16px #ff3300;
   opacity: 0;
 }
 
@@ -458,7 +552,7 @@ body.no-scroll {
 
 .diwali-greeting h1 {
   font-family: "Copperplate", "Copperplate Gothic Light", "Times New Roman", serif;
-  font-size: clamp(2.2rem, 5.5vw, 4.8rem);
+  font-size: clamp(2.0rem, 5.0vw, 4.2rem);
   font-weight: 400;
   letter-spacing: 0.22em;
   padding-left: 0.22em;
@@ -479,13 +573,10 @@ body.no-scroll {
   text-shadow: 0 0 12px rgba(255, 180, 0, 0.6);
 }
 
-/* =========================================
-   SECTION 2: INTERACTIVE DIGITAL DIYA
-   ========================================= */
 
 .next-section {
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   background: #080808;
   display: flex;
@@ -493,8 +584,24 @@ body.no-scroll {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  padding: 60px 20px;
+  padding: 40px 16px;
   box-sizing: border-box;
+  touch-action: pan-y;
+}
+
+.next-section:not(.diya-is-lit) {
+  touch-action: none;
+}
+
+
+.sacred-altar-container {
+  position: relative;
+  width: min(92vw, 480px);
+  height: min(92vw, 480px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .diya-ambient-glow {
@@ -502,13 +609,13 @@ body.no-scroll {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 850px;
-  height: 850px;
+  width: min(150vw, 750px);
+  height: min(150vw, 750px);
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(255, 170, 40, 0.22) 0%,
-    rgba(255, 120, 10, 0.1) 35%,
+    rgba(255, 170, 40, 0.25) 0%,
+    rgba(255, 120, 10, 0.12) 35%,
     rgba(212, 175, 55, 0.04) 60%,
     transparent 75%
   );
@@ -528,8 +635,8 @@ body.no-scroll {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(88vw, 520px);
-  height: min(88vw, 520px);
+  width: 120%;
+  height: 120%;
   pointer-events: none;
   opacity: 0.22;
   transition: opacity 1.4s ease, filter 1.4s ease;
@@ -540,7 +647,7 @@ body.no-scroll {
 }
 
 .floor-rangoli.lit {
-  opacity: 0.65;
+  opacity: 0.7;
   filter: drop-shadow(0 0 30px rgba(255, 175, 40, 0.45))
           drop-shadow(0 0 60px rgba(255, 120, 0, 0.25));
 }
@@ -565,11 +672,26 @@ body.no-scroll {
   justify-content: center;
   z-index: 10;
   user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateY(12px); 
+}
+
+.wick-precision-target {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 20;
 }
 
 .diya-svg {
-  width: 210px;
-  height: 145px;
+  width: min(55vw, 210px);
+  height: auto;
   filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.9));
   transition: filter 0.8s ease;
 }
@@ -588,6 +710,7 @@ body.no-scroll {
   pointer-events: none;
   opacity: 0;
   transform-origin: center bottom;
+  z-index: 15;
 }
 
 .flame-container.lit {
@@ -642,28 +765,36 @@ body.no-scroll {
 }
 
 .kindle-prompt {
-  margin-top: 28px;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
   font-family: 'Julius Sans One', sans-serif;
-  font-size: 0.85rem;
-  letter-spacing: 0.28em;
+  font-size: clamp(0.7rem, 2.2vw, 0.85rem);
+  letter-spacing: 0.22em;
   color: #ffe082;
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
   text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
   animation: pulsePrompt 2s infinite ease-in-out;
+  pointer-events: none;
 }
 
 @keyframes pulsePrompt {
-  0%, 100% { opacity: 0.7; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(-3px); }
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(-3px); }
 }
 
 .blessing-text {
-  margin-top: 25px;
+  margin-top: 15px;
   text-align: center;
   max-width: 650px;
+  width: 100%;
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 1.4s ease 0.4s, transform 1.4s ease 0.4s;
@@ -675,42 +806,60 @@ body.no-scroll {
   transform: translateY(0);
 }
 
+/* =========================================
+   PERFECTED QUOTE CARD ALIGNMENT
+   ========================================= */
+
 .personal-card {
   position: relative;
-  background: rgba(20, 15, 5, 0.65);
-  border: 1px solid rgba(255, 215, 0, 0.35);
-  border-radius: 12px;
-  padding: 16px 28px;
-  margin-bottom: 24px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(255, 180, 0, 0.1);
-  backdrop-filter: blur(6px);
+  background: rgba(18, 14, 5, 0.82);
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  border-radius: 14px;
+  padding: 16px 22px;
+  margin: 0 auto 20px auto;
+  max-width: 540px;
+  width: 90%;
+  box-shadow: 
+    0 10px 35px rgba(0, 0, 0, 0.85),
+    inset 0 0 25px rgba(255, 190, 40, 0.08);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
 }
 
-.card-quotes {
-  font-size: 2rem;
-  color: #ffd700;
-  opacity: 0.5;
-  line-height: 0;
-}
-
-.card-quotes.end {
-  float: right;
-  margin-top: 10px;
+.card-ornament-top {
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  color: #d4af37;
+  opacity: 0.8;
+  margin-bottom: 8px;
 }
 
 .personal-msg {
-  font-family: 'Georgia', serif;
+  font-family: 'Georgia', 'Times New Roman', serif;
   font-style: italic;
-  font-size: 1.05rem;
+  font-size: clamp(0.95rem, 3.2vw, 1.25rem);
   line-height: 1.6;
-  color: #fff0c7;
-  margin: 6px 0;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  color: #fff2cc;
+  margin: 0;
+  padding: 4px 6px;
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+  word-break: break-word;
+}
+
+.card-ornament-bottom {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ffd700, transparent);
+  margin-top: 12px;
 }
 
 .shloka-sanskrit {
   font-family: "Copperplate", "Copperplate Gothic Light", "Times New Roman", serif;
-  font-size: clamp(1.2rem, 3vw, 1.75rem);
+  font-size: clamp(1.15rem, 3.5vw, 1.75rem);
   letter-spacing: 0.16em;
   color: #ffdf85;
   margin: 0;
@@ -719,18 +868,17 @@ body.no-scroll {
 
 .shloka-english {
   font-family: 'Julius Sans One', sans-serif;
-  font-size: 0.88rem;
+  font-size: clamp(0.75rem, 2vw, 0.88rem);
   font-weight: 600;
   letter-spacing: 0.28em;
   color: #f5b041;
-  margin-top: 12px;
+  margin-top: 10px;
   text-transform: uppercase;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 12px rgba(230, 138, 0, 0.65);
 }
 
 .scroll-indicator {
-  position: absolute;
-  bottom: 25px;
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -754,26 +902,27 @@ body.no-scroll {
 
 .forge-section {
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 80px 20px;
+  padding: 60px 16px;
   box-sizing: border-box;
   background: radial-gradient(circle at 50% 30%, #161208 0%, #080808 70%);
   z-index: 10;
 }
 
 .forge-container {
-  width: min(92vw, 680px);
-  background: rgba(18, 14, 6, 0.8);
+  width: min(94vw, 680px);
+  background: rgba(18, 14, 6, 0.85);
   border: 1px solid rgba(255, 215, 0, 0.3);
   border-radius: 18px;
-  padding: clamp(24px, 5vw, 44px);
+  padding: clamp(20px, 4.5vw, 44px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(255, 180, 0, 0.08);
   backdrop-filter: blur(12px);
   position: relative;
+  box-sizing: border-box;
 }
 
 .forge-container::before {
@@ -788,7 +937,7 @@ body.no-scroll {
 
 .forge-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .forge-badge {
@@ -804,8 +953,10 @@ body.no-scroll {
 }
 
 .forge-header h2 {
-  font-family: "Copperplate", "Copperplate Gothic Light", serif;
-  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  /* font-family: "Copperplate", "Copperplate Gothic Light", serif; */
+  font-family: "Edu QLD Hand", cursive;
+
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
   font-weight: 300;
   letter-spacing: 0.15em;
   color: #ffdf85;
@@ -824,7 +975,7 @@ body.no-scroll {
 .forge-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .form-row {
@@ -889,6 +1040,8 @@ body.no-scroll {
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input-group input:focus, 
@@ -951,4 +1104,120 @@ body.no-scroll {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
+}
+
+/* PAGE 2: DIWALI WISHES */
+
+.wishes-section {
+  min-height: 100vh;
+  width: 100%;
+  background: #080808;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.wishes-content {
+  max-width: 850px;
+}
+
+.wishes-label {
+  
+  color: #b8860b;
+  letter-spacing: 0.4em;
+  font-size: 0.75rem;
+  margin-bottom: 35px;
+}
+
+.wishes-content h1 {
+ font-family: "Edu NSW ACT Cursive", cursive;
+  color: #f5d77e;
+  font-size: clamp(0.6rem, 1.5vw, 1.5rem);
+  letter-spacing: 0.11em;
+  line-height: 1.5;
+  text-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+}
+
+.wishes-content > p:not(.wishes-label) {
+  color: #c5a75e;
+  font-size: 0.8rem;
+  
+  letter-spacing: 0.12em;
+  line-height: 2;
+  margin-top: 30px;
+}
+
+.wishes-divider {
+  display: block;
+  color: #d4af37;
+  font-size: 2rem;
+  margin-top: 40px;
+}
+.finale-section {
+  position: relative;
+  width: 100%;
+height: 100vh;
+  overflow: hidden;
+  background: #080808;
+}
+
+.finale-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.finale-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 60px 20px;
+  text-align: center;
+  background: linear-gradient(
+    to bottom,
+    transparent 45%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  
+}
+
+.finale-overlay p {
+  color: #d4af37;
+  letter-spacing: 0.35em;
+  font-size: 0.8rem;
+  margin-bottom: 18px;
+}
+
+.finale-overlay h1 {
+  font-size: clamp(2.2rem, 4.5vw, 4.2rem);
+  margin-bottom: 25px;
+  color: #f5d77e;
+  font-family: "Great Vibes", cursive;
+
+  font-weight: normal;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.finale-section ~ .hanging-lights-container {
+  display: none;
+}
+
+
+.hanging-lights-container.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.hanging-lights-container.waiting {
+  opacity: 0;
+  visibility: hidden;
 }

@@ -3,42 +3,41 @@ import gsap from 'gsap';
 import './App.css';
 
 function App() {
+  const [soundOn, setSoundOn] = useState(false);
+  const [showFinale, setShowFinale] = useState(false);
   const whistleAudioRef = useRef(null);
   const boomAudioRef = useRef(null);
   const nextSectionRef = useRef(null);
   const cursorRef = useRef(null);
-
-  // Extract URL parameters for dynamic personalized greetings
+  const wickHitboxRef = useRef(null);
+  const rocketSoundRef = useRef(null);
+  const diwaliMusicRef = useRef(null);
   const searchParams = new URLSearchParams(window.location.search);
   const urlTo = searchParams.get('to') || '';
   const urlFrom = searchParams.get('from') || '';
   const urlMsg = searchParams.get('msg') || '';
   const isPersonalized = Boolean(urlTo || urlFrom);
-
-  // Interaction states
   const [isDiyaLit, setIsDiyaLit] = useState(false);
   const [isInSection2, setIsInSection2] = useState(false);
-
-  // Form states for Section 3 link generation
+  const [isDraggingMatch, setIsDraggingMatch] = useState(false);
   const [inputSender, setInputSender] = useState('');
   const [inputReceiver, setInputReceiver] = useState('');
   const [inputMessage, setInputMessage] = useState('');
   const [copied, setCopied] = useState(false);
-
-  // Curated festive blessings pool
-  const festiveWishes = [
-    "May the golden luminescence of this sacred light dispel every shadow from your path and bestow prosperity, vitality, and eternal joy upon your home.",
-    "Wishing you an abundance of laughter, golden warmth, and boundless auspicious blessings as we celebrate the festival of lights.",
-    "May the triumph of light over darkness guide your aspirations to great heights and illuminate your journey ahead.",
-    "Sending you divine peace, glowing health, and the eternal grace of Goddess Lakshmi this auspicious Diwali."
-  ];
+  // const festiveWishes = [
+  //   "May the golden luminescence of this sacred light dispel every shadow from your path and bestow prosperity, vitality, and eternal joy upon your home.",
+  //   "Wishing you an abundance of laughter, golden warmth, and boundless auspicious blessings as we celebrate the festival of lights.",
+  //   "May the triumph of light over darkness guide your aspirations to great heights and illuminate your journey ahead.",
+  //   "Sending you divine peace, glowing health, and the eternal grace of Goddess Lakshmi this auspicious Diwali."
+  // ];
 
   const handleShuffleWish = () => {
     const nextWish = festiveWishes[Math.floor(Math.random() * festiveWishes.length)];
     setInputMessage(nextWish);
   };
 
-  // Build the live personalized URL
+
+
   const generatedShareLink = `${window.location.origin}${window.location.pathname}?to=${encodeURIComponent(inputReceiver.trim())}&from=${encodeURIComponent(inputSender.trim())}&msg=${encodeURIComponent(inputMessage.trim())}`;
 
   const handleCopyLink = () => {
@@ -47,12 +46,65 @@ function App() {
     setTimeout(() => setCopied(false), 2400);
   };
 
+
+useEffect(() => {
+  if (isDiyaLit) {
+    setTimeout(() => {
+      document.getElementById('golden-wishes')?.scrollIntoView({
+        behavior: 'smooth',
+        duration: 1000,
+        block: 'start'
+      });
+    }, 300);
+  }
+}, [isDiyaLit]);
   const handleShareWhatsApp = () => {
     const text = `✨ *Happy Diwali!* I have lit a sacred digital Diya especially for you.\n\nOpen your personal light dedication here:\n${generatedShareLink}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
+const toggleSound = () => {
+  if (!diwaliMusicRef.current) return;
 
-  // Palette & Particles
+  if (soundOn) {
+    diwaliMusicRef.current.pause();
+    setSoundOn(false);
+  } else {
+    diwaliMusicRef.current.volume = 0.5;
+
+    diwaliMusicRef.current.play()
+      .then(() => setSoundOn(true))
+      .catch(err => console.log(err));
+  }
+};
+  const handleLightDiya = () => {
+    if (isDiyaLit) return;
+    setIsDiyaLit(true);
+    setIsDraggingMatch(false);
+
+    gsap.fromTo(
+      '.flame-container',
+      { scale: 0, y: 15 },
+      { scale: 1, y: 0, duration: 0.6, ease: 'back.out(2)' }
+    );
+  };
+  useEffect(() => {
+    const finale = document.querySelector('.finale-section');
+
+    if (!finale) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowFinale(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(finale);
+
+    return () => observer.disconnect();
+  }, []);
+
+
   const palette = [
     { color: '#ffffff', glow: 'rgba(255, 255, 255, 1)' },
     { color: '#ffd15c', glow: 'rgba(255, 209, 92, 0.95)' },
@@ -62,9 +114,9 @@ function App() {
     { color: '#27e87b', glow: 'rgba(39, 232, 123, 0.85)' }
   ];
 
-  const rocketSparks = Array.from({ length: 14 }, (_, i) => ({
+  const rocketSparks = Array.from({ length: 18 }, (_, i) => ({
     id: i,
-    driftX: (Math.random() - 0.5) * 30
+    driftX: (Math.random() - 0.5) * 32
   }));
 
   const burstParticles = Array.from({ length: 120 }, (_, i) => {
@@ -94,31 +146,95 @@ function App() {
     };
   });
 
-  // Mouse tracking and section detection
+  // Global mouse and touch tracker with precision wick hitbox
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const updatePosition = (clientX, clientY) => {
       if (cursorRef.current) {
         gsap.to(cursorRef.current, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.12,
+          x: clientX,
+          y: clientY,
+          duration: 0.06,
           ease: 'power2.out'
         });
       }
     };
 
+    const checkWickCollision = (clientX, clientY) => {
+      if (isDiyaLit) return;
+      const wick = wickHitboxRef.current;
+      if (wick) {
+        const rect = wick.getBoundingClientRect();
+        const wickCenterX = rect.left + rect.width / 2;
+        const wickCenterY = rect.top + rect.height / 2;
+        const distance = Math.hypot(clientX - wickCenterX, clientY - wickCenterY);
+
+        if (distance <= 32) {
+          handleLightDiya();
+        }
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      updatePosition(e.clientX, e.clientY);
+      if (isInSection2 && !isDiyaLit) {
+        checkWickCollision(e.clientX, e.clientY);
+      }
+    };
+
+    const handleTouchStart = (e) => {
+      if (e.touches.length > 0) {
+        setIsDraggingMatch(true);
+        const touch = e.touches[0];
+        const offset = isInSection2 && !isDiyaLit ? 35 : 0;
+        updatePosition(touch.clientX, touch.clientY - offset);
+        if (isInSection2 && !isDiyaLit) {
+          checkWickCollision(touch.clientX, touch.clientY - offset);
+        }
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        if (isInSection2 && !isDiyaLit) {
+          if (e.cancelable) e.preventDefault();
+          const flameX = touch.clientX;
+          const flameY = touch.clientY - 35;
+          updatePosition(flameX, flameY);
+          checkWickCollision(flameX, flameY);
+        } else {
+          updatePosition(touch.clientX, touch.clientY);
+        }
+      }
+    };
+
+    const handleTouchEnd = () => {
+      setIsDraggingMatch(false);
+    };
+
     const handleScroll = () => {
-      setIsInSection2(window.scrollY >= window.innerHeight * 0.5 && window.scrollY < window.innerHeight * 1.8);
+      if (!nextSectionRef.current) return;
+      const rect = nextSectionRef.current.getBoundingClientRect();
+      const inView = rect.top <= window.innerHeight * 0.55 && rect.bottom >= window.innerHeight * 0.35;
+      setIsInSection2(inView);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    handleScroll();
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [isInSection2, isDiyaLit]);
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
@@ -132,27 +248,26 @@ function App() {
         autoAlpha: 0,
         display: 'none'
       });
-
-      // Scene 1: LUMORA text ascends
       tl.to(
         '.intro-text',
         {
           opacity: 0,
-          y: -35,
-          duration: 1.2,
+          y: -40,
+          filter: 'blur(4px)',
+          duration: 1.1,
           ease: 'power2.inOut'
         },
-        '+=0.01'
+        '+=2.4'
       );
 
-      // Scene 2: Firecracker setup
+
       tl.set('.firecracker', {
         autoAlpha: 1,
         display: 'block',
-        y: -160
+        y: -180
       });
 
-      // Scene 3: Rocket drops with physics momentum
+     
       tl.to('.firecracker', {
         y: window.innerHeight * 0.5,
         duration: 1.15,
@@ -160,96 +275,86 @@ function App() {
         onStart: () => {
           if (whistleAudioRef.current) {
             whistleAudioRef.current.currentTime = 0;
-            whistleAudioRef.current.play().catch(() => {});
+            whistleAudioRef.current.play().catch(() => { });
           }
         }
       });
 
       tl.fromTo(
         '.drop-spark',
-        { autoAlpha: 1, scale: 1, y: 0 },
+        { autoAlpha: 1, scale: 1 },
         {
           autoAlpha: 0,
-          scale: 0.1,
-          y: -35,
+          scale: 0.2,
           duration: 0.35,
-          stagger: 0.05,
+          stagger: 0.03,
           ease: 'power1.out'
         },
         '<0.1'
       );
 
-      // Scene 4: Instant vanishing at impact point
       tl.set('.firecracker', {
         autoAlpha: 0,
         display: 'none'
       });
 
       tl.add(() => {
-        if (boomAudioRef.current) {
-          boomAudioRef.current.currentTime = 0;
-          boomAudioRef.current.play().catch(() => {});
+        if (rocketSoundRef.current) {
+          rocketSoundRef.current.currentTime = 0;
+          rocketSoundRef.current.play().catch(err => {
+            console.log("Rocket audio error:", err);
+          });
         }
+        gsap.fromTo('.hero-section',
+          { x: -5, y: 4 },
+          { x: 0, y: 0, duration: 0.3, ease: 'power2.out' }
+        );
       });
 
-      // Scene 5: Violent detonation flash & ring shockwave
-      tl.set('.ambient-flash, .blast-ring', { display: 'block' });
-      tl.fromTo(
-        '.ambient-flash',
-        { autoAlpha: 0.65 },
-        { autoAlpha: 0, duration: 0.22, ease: 'power2.out' }
-      );
-      tl.fromTo(
-        '.blast-ring',
-        { autoAlpha: 0.9, scale: 0.1 },
-        { autoAlpha: 0, scale: 2.2, duration: 0.55, ease: 'expo.out' },
-        '<'
+
+      tl.set(
+        '.blast-ring, .burst-streak, .core-burst-spark',
+        {
+          autoAlpha: 0,
+          display: 'none'
+        }
       );
 
-      // Scene 6: Pure symmetrical radial burst
-      tl.set('.burst-streak, .core-burst-spark', {
-        autoAlpha: 1,
+      tl.set('.ambient-flash', {
         display: 'block',
-        x: 0,
-        y: 0,
-        scale: 0.2
+        autoAlpha: 0
       });
 
-      tl.to('.burst-streak', {
-        x: (index, target) => Number(target.dataset.x),
-        y: (index, target) => Number(target.dataset.y),
-        rotation: (index, target) => Number(target.dataset.angle),
-        scaleY: 1.15,
-        scaleX: 0.85,
-        duration: 0.85,
-        ease: 'expo.out',
-        stagger: { each: 0.001, from: 'random' }
-      }, '<');
 
-      tl.to('.core-burst-spark', {
-        x: (index, target) => Number(target.dataset.x),
-        y: (index, target) => Number(target.dataset.y),
-        scale: 1.4,
-        duration: 0.5,
-        ease: 'power2.out',
-        stagger: { each: 0.0015, from: 'center' }
-      }, '<');
-
-      // Dissolve burst cleanly into Section 1 mandala
-      tl.to('.burst-streak, .core-burst-spark', {
-        opacity: 0,
-        scaleY: 0.1,
-        scaleX: 0.1,
+      tl.to('.ambient-flash', {
+        autoAlpha: 1,
         duration: 0.45,
-        ease: 'power2.in'
-      }, '-=0.25');
+        ease: 'power2.out'
+      });
 
-      // Scene 7: Section 1 mandala blooms
+      tl.to('.ambient-flash', {
+        autoAlpha: 1,
+        duration: 0.7
+      });
+
+
+      tl.to('.ambient-flash', {
+        autoAlpha: 0,
+        duration: 1.4,
+        ease: 'power2.inOut'
+      });
+
+      tl.set('.ambient-flash', {
+        display: 'none'
+      });
+tl.set('.hanging-lights-container', {
+  autoAlpha: 1
+});
       tl.set('.mandala-wrapper', {
         display: 'flex',
         '--mask-inner': '50%',
         '--mask-outer': '72%',
-        filter: 'blur(0px) drop-shadow(0 0 25px rgba(255, 185, 0, 0.3))'
+        filter: 'blur(0px) drop-shadow(0 0 26px rgba(255, 185, 0, 0.3))'
       });
 
       tl.fromTo('.mandala-wrapper',
@@ -260,14 +365,14 @@ function App() {
         },
         {
           autoAlpha: 0.85,
-          scale: 1,
+          scale: 1.35,
           duration: 0.45,
           ease: 'power2.out'
         },
         '<'
       );
 
-      // Scene 8: Seamless inward diffusion & merge into dark background
+     
       tl.to('.mandala-wrapper', {
         rotation: 35,
         scale: 1.15,
@@ -283,12 +388,13 @@ function App() {
         display: 'none'
       });
 
-      // Scene 9: Happy Diwali reveal (Personalized or Universal)
+    
       tl.set('.diwali-greeting', {
         display: 'block'
       });
 
-      tl.fromTo('.diwali-greeting',
+      tl.fromTo(
+        '.diwali-greeting',
         {
           autoAlpha: 0,
           y: 18,
@@ -299,11 +405,12 @@ function App() {
           y: 0,
           scale: 1,
           duration: 1.4,
-          ease: 'power3.out'
+          ease: 'power3.out',
+
+         
         }
       );
 
-      // Scene 10: Hold 0.5s, unlock scroll, and glide down full 100vh into Section 2
       tl.call(() => {
         document.documentElement.classList.remove('no-scroll');
         document.body.classList.remove('no-scroll');
@@ -330,26 +437,45 @@ function App() {
     };
   }, []);
 
-  const handleLightDiya = () => {
-    if (isDiyaLit) return;
-    setIsDiyaLit(true);
-
-    gsap.fromTo('.flame-container', 
-      { scale: 0, y: 15 },
-      { scale: 1, y: 0, duration: 0.5, ease: 'back.out(2)' }
-    );
-  };
-
-  const showMatchstickCursor = isInSection2 && !isDiyaLit;
+  const showMatchstick = isInSection2 && !isDiyaLit;
 
   return (
     <div className="page-wrapper">
+      <button
+        onClick={toggleSound}
+        style={{
+          position: 'fixed',
+          bottom: '100px',
+          right: '110px',
+          zIndex: 99,
+          padding: '18px 20px',
+          background: 'transparent',
+          // color: 'transparent',
+          border: '2px solid #ffd700',
+          borderRadius: '28px',
+          backdropFilter: 'blur(16px)',
+          cursor: 'pointer'
+
+        }}
+      >
+        
+       {soundOn ? (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ffd700">
+    <path d="M3 9v6h4l5 5V4L7 9H3zm13.59 3 2.12-2.12-1.41-1.41L15.17 11.6l-2.12-2.12-1.41 1.41L13.76 13l-2.12 2.12 1.41 1.41 2.12-2.12 2.12 2.12 1.41-1.41L16.59 13z"/>
+  </svg>) : (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ffd700">
+    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a3.5 3.5 0 0 0-2-3.16v6.32a3.5 3.5 0 0 0 2-3.16zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z"/>
+  </svg>)}
+ </button>
       <audio ref={whistleAudioRef} src="/firecracker-whistle.mp3" preload="auto" />
       <audio ref={boomAudioRef} src="/explosion.mp3" preload="auto" />
+      <audio ref={rocketSoundRef} src="/rocket-burst.mp3" preload="auto" />
+      <audio ref={diwaliMusicRef} src="/diwali_theme.mp3" preload="auto" loop />
 
-      {/* DYNAMIC CUSTOM FESTIVE CURSOR */}
-      <div className="custom-cursor-container" ref={cursorRef}>
-        {showMatchstickCursor ? (
+    
+      <div
+        className={`custom-cursor-container ${showMatchstick ? 'mode-match' : 'mode-pointer'} ${isDraggingMatch ? 'active-drag' : ''}`}
+        ref={cursorRef}
+      >
+        {showMatchstick ? (
           <div className="matchstick-cursor">
             <div className="matchstick-flame"></div>
             <div className="matchstick-head"></div>
@@ -363,12 +489,11 @@ function App() {
         )}
       </div>
 
-      {/* Screen flash layer */}
+
       <div className="ambient-flash"></div>
 
-      {/* FIXED HANGING DIYAS (8 CANOPY LAMPS) */}
-      <div className={`hanging-lights-container ${isDiyaLit ? 'lit' : ''}`}>
-        <div className="hanging-lamp lamp-1"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
+    
+<div className={`hanging-lights-container ${isDiyaLit ? 'lit' : ''} ${showFinale ? 'hidden' : 'waiting'}`}>        <div className="hanging-lamp lamp-1"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
         <div className="hanging-lamp lamp-2"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
         <div className="hanging-lamp lamp-3"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
         <div className="hanging-lamp lamp-4"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
@@ -378,66 +503,47 @@ function App() {
         <div className="hanging-lamp lamp-8"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
       </div>
 
-      {/* SECTION 1: HERO VIEWPORT */}
       <section className="hero-section">
         <div className="intro-text">
           <h1>LUMORA</h1>
+          <br /> 
           <p>A FESTIVAL OF LIGHT</p>
-          <h2>A CELEBRATION OF LIGHT</h2>
+       
         </div>
 
+     
         <div className="firecracker">
-          <div className="firecracker-head"></div>
-          <div className="firecracker-glow"></div>
+          <div className="rocket-body">
+            <div className="rocket-nozzle"></div>
+          </div>
+          <div className="firecracker-head">
+            <div className="fuse-spark fuse-1"></div>
+            <div className="fuse-spark fuse-2"></div>
+            <div className="fuse-core"></div>
+          </div>
           <div className="exhaust-stream">
             {rocketSparks.map((s) => (
               <span
                 key={s.id}
                 className="drop-spark"
-                style={{ transform: `translateX(${s.driftX}px)` }}
+                style={{
+                  transform: `translateX(${s.driftX}px)`,
+                  animationDelay: `${(s.id * 0.04)}s`
+                }}
               />
             ))}
           </div>
         </div>
 
         <div className="explosion">
-          <div className="blast-ring"></div>
+         
 
-          {burstParticles.map((p) => (
-            <div
-              className="burst-streak"
-              key={p.id}
-              data-x={p.targetX}
-              data-y={p.targetY}
-              data-angle={p.rotation}
-              style={{
-                height: `${p.length}px`,
-                background: `linear-gradient(to top, transparent, ${p.color})`,
-                boxShadow: `0 0 10px ${p.glow}`
-              }}
-            />
-          ))}
-
-          {coreFlashSparks.map((c) => (
-            <div
-              className="core-burst-spark"
-              key={c.id}
-              data-x={c.x}
-              data-y={c.y}
-              style={{
-                width: `${c.size}px`,
-                height: `${c.size}px`
-              }}
-            />
-          ))}
-
-          {/* Section 1 Original Mandala */}
           <div className="mandala-wrapper">
             <img src="/mandala.png" alt="Diwali Rangoli Mandala" className="mandala-img" />
           </div>
         </div>
 
-        {/* Section 1 Greeting: Dynamic URL personalization */}
+        
         <div className="diwali-greeting">
           {isPersonalized ? (
             <>
@@ -452,66 +558,71 @@ function App() {
         </div>
       </section>
 
-      {/* SECTION 2: THE INTERACTIVE SACRED DIYA */}
-      <section className="next-section" ref={nextSectionRef}>
-        <div className={`diya-ambient-glow ${isDiyaLit ? 'lit' : ''}`}></div>
+    
+      <section className={`next-section ${isDiyaLit ? 'diya-is-lit' : ''}`} ref={nextSectionRef}>
 
-        {/* Section 2 Distinct Floor Rangoli */}
-        <div className={`floor-rangoli ${isDiyaLit ? 'lit' : ''}`}>
-          <img src="/mandala-floor.png" alt="Ceremonial Floor Rangoli" />
-        </div>
+      
+        <div className="sacred-altar-container">
+          <div className={`diya-ambient-glow ${isDiyaLit ? 'lit' : ''}`}></div>
 
-        <div className={`diya-stage ${isDiyaLit ? 'is-lit' : ''}`} onClick={handleLightDiya}>
-          <div className={`flame-container ${isDiyaLit ? 'lit' : ''}`}>
-            <div className="flame-outer"></div>
-            <div className="flame-inner"></div>
-            <div className="flame-blue-base"></div>
+          <div className={`floor-rangoli ${isDiyaLit ? 'lit' : ''}`}>
+            <img src="/mandala-floor.png" alt="Ceremonial Floor Rangoli" />
           </div>
 
-          <svg className="diya-svg" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#e5a93b" />
-                <stop offset="45%" stopColor="#8c5819" />
-                <stop offset="80%" stopColor="#4a2e0a" />
-                <stop offset="100%" stopColor="#211403" />
-              </linearGradient>
-              <linearGradient id="lipGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ffc86b" />
-                <stop offset="100%" stopColor="#693e0b" />
-              </linearGradient>
-            </defs>
+          <div className={`diya-stage ${isDiyaLit ? 'is-lit' : ''}`}>
+            <div className={`flame-container ${isDiyaLit ? 'lit' : ''}`}>
+              <div className="flame-outer"></div>
+              <div className="flame-inner"></div>
+              <div className="flame-blue-base"></div>
+            </div>
 
-            <ellipse cx="100" cy="108" rx="42" ry="7" fill="#140c03" />
-            <path d="M72 104 C72 104, 82 96, 100 96 C118 96, 128 104, 128 104 L122 108 L78 108 Z" fill="url(#brassGrad)" />
-            <path d="M25 50 Q100 125 175 50 Q180 44 165 42 Q100 52 35 42 Q20 44 25 50 Z" fill="url(#brassGrad)" />
-            <ellipse cx="100" cy="46" rx="72" ry="12" fill="url(#lipGrad)" />
-            <ellipse cx="100" cy="47" rx="64" ry="9" fill="#2d1704" />
-            <path d="M98 47 Q100 30 100 24 Q100 30 102 47 Z" fill="#d9c5b2" />
-            <circle cx="100" cy="24" r="2.5" fill="#402d24" />
-          </svg>
+            
+            <div className="wick-precision-target" ref={wickHitboxRef}></div>
+
+            <svg className="diya-svg" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#e5a93b" />
+                  <stop offset="45%" stopColor="#8c5819" />
+                  <stop offset="80%" stopColor="#4a2e0a" />
+                  <stop offset="100%" stopColor="#211403" />
+                </linearGradient>
+                <linearGradient id="lipGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#ffc86b" />
+                  <stop offset="100%" stopColor="#693e0b" />
+                </linearGradient>
+              </defs>
+
+              <ellipse cx="100" cy="108" rx="42" ry="7" fill="#140c03" />
+              <path d="M72 104 C72 104, 82 96, 100 96 C118 96, 128 104, 128 104 L122 108 L78 108 Z" fill="url(#brassGrad)" />
+              <path d="M25 50 Q100 125 175 50 Q180 44 165 42 Q100 52 35 42 Q20 44 25 50 Z" fill="url(#brassGrad)" />
+              <ellipse cx="100" cy="46" rx="72" ry="12" fill="url(#lipGrad)" />
+              <ellipse cx="100" cy="47" rx="64" ry="9" fill="#2d1704" />
+              <path d="M98 47 Q100 30 100 24 Q100 30 102 47 Z" fill="#d9c5b2" />
+              <circle cx="100" cy="24" r="2.5" fill="#402d24" />
+            </svg>
+          </div>
 
           {!isDiyaLit && (
             <div className="kindle-prompt">
-              <span>✦</span> Touch Flame to Kindle the Light <span>✦</span>
+              <span>✦</span> Drag Flame to the Wick to Kindle <span>✦</span>
             </div>
           )}
         </div>
 
-        {/* Revealed Blessing & Custom Note (if shared via link) */}
+        
         <div className={`blessing-text ${isDiyaLit ? 'lit' : ''}`}>
           {urlMsg && (
             <div className="personal-card">
-              <span className="card-quotes">“</span>
-              <p className="personal-msg">{urlMsg}</p>
-              <span className="card-quotes end">”</span>
+              <div className="card-ornament-top">✦ ✧ ✦</div>
+              <p className="personal-msg">“{urlMsg}”</p>
+              <div className="card-ornament-bottom"></div>
             </div>
           )}
           <p className="shloka-sanskrit">तमसो मा ज्योतिर्गमय</p>
-          <p className="shloka-english">From darkness, lead me to light</p>
+          <p className="shloka-english">From darkness, leading to light</p>
         </div>
 
-        {/* Subtle scroll cue towards Creator Console */}
         {isDiyaLit && (
           <div className="scroll-indicator">
             <span>Scroll to dedicate your own light</span>
@@ -520,13 +631,43 @@ function App() {
         )}
       </section>
 
-      {/* SECTION 3: THE SACRED FORGE (PERSONALIZED GREETING CREATOR) */}
+      
+<section id="golden-wishes" className="wishes-section">
+
+        <div className="wishes-content">
+
+          <p className="wishes-label">Dark nights, golden lights, endless vibes! </p>
+          <br />
+          <br />
+          <br />
+          <h1>
+            Let the diyas glow, the sweets flow, and the magic unfold.
+            <br />
+            May your home shine with happiness, your heart overflow with love, and your year sparkle with endless possibilities.
+          </h1>
+          <br />
+          <p>
+            Wishing you and your loved ones a very Happy Diwali! ✨
+          </p>
+          <br />
+          <span className="wishes-divider">↓ </span>
+
+        </div>
+
+      </section>
+
+      
       <section className="forge-section">
         <div className="forge-container">
           <div className="forge-header">
-            <span className="forge-badge">LUMORA DEDICATION</span>
-            <h2>Send a Living Diya</h2>
-            <p>Kindle a personal festive tribute for someone dear to you.</p>
+            
+            <h2>Send a Living Diya </h2>
+            <br />
+            <br /><br />
+            <p>No filters needed when the whole night is glowing.</p>
+            <br />
+            <br /><br />
+
           </div>
 
           <div className="forge-form">
@@ -578,7 +719,7 @@ function App() {
                 onClick={handleCopyLink}
                 disabled={!inputReceiver.trim() && !inputSender.trim()}
               >
-                {copied ? '✓ Personal Link Copied!' : '🎁 Copy Dedication Link'}
+                {copied ? '✓ Personal Link Copied!' : 'Copy Dedication Link'}
               </button>
 
               <button
@@ -587,11 +728,30 @@ function App() {
                 onClick={handleShareWhatsApp}
                 disabled={!inputReceiver.trim() && !inputSender.trim()}
               >
-                📲 Share on WhatsApp
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="16px" width="16px" fill="#e3e3e3"><path d="M17,22q-1.25,0-2.13-0.88T14,19q0-0.15 0.08-0.7L7.05,14.2q-0.4,0.38-0.93,0.59T5,15q-1.25,0-2.13-0.88T2,12T2.88,9.88T5,9Q5.6,9 6.13,9.21T7.05,9.8l7.03-4.1q-0.05-0.18-0.06-0.34T14,5q0-1.25 0.88-2.13T17,2t2.13,0.88T20,5T19.13,7.13T17,8q-0.6,0-1.13-0.21T14.95,7.2L7.93,11.3q0.05,0.18 0.06,0.34T8,12T7.99,12.36T7.93,12.7l7.03,4.1q0.4-0.38 0.92-0.59T17,16q1.25,0 2.13,0.88T20,19t-0.88,2.13T17,22Zm0-2q0.43,0 0.71-0.29Q18,19.43 18,19t-0.29-0.71T17,18t-0.71,0.29T16,19t0.29,0.71T17,20ZM5,13q0.43,0 0.71-0.29Q6,12.43 6,12T5.71,11.29T5,11q-0.42,0-0.71,0.29T4,12t0.29,0.71T5,13ZM17.71,5.71Q18,5.43 18,5T17.71,4.29T17,4T16.29,4.29T16,5t0.29,0.71T17,6t0.71-0.29ZM17,19ZM5,12ZM17,5Z" /></svg> Share on WhatsApp
               </button>
             </div>
           </div>
         </div>
+      </section>
+     
+      <section className="finale-section">
+
+        <video
+          className="finale-video"
+          src="/diwali-finale.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+        />
+
+        <div className="finale-overlay">
+          <p>AND THE NIGHT ENDS IN GOLD...</p>
+          <h1>Until The Next Celebration ✨</h1>
+        </div>
+
       </section>
     </div>
   );
