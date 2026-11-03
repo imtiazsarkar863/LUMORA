@@ -632,7 +632,7 @@ function App() {
             <br />
             May your home shine with happiness, your heart overflow with love, and your year sparkle with endless possibilities.
           </h1>
-          <br />
+          <br /> <br />
           <p>
             Wishing you and your loved ones a very Happy Diwali! ✨
           </p>

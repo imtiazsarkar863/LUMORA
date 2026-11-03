@@ -1263,6 +1263,12 @@ height: 100vh;
     text-align: center;
     letter-spacing: 0.12em;
   }
+  .wishes-content h1 {
+ font-family: "Edu NSW ACT Cursive", cursive;
+  color: #f5d77e;
+  font-size: 0.9rem;
+  letter-spacing: 0.11em;
+}
   
 }
 
