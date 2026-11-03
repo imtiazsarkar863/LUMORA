@@ -538,7 +538,7 @@ body.no-scroll {
 
 .diwali-greeting {
   position: absolute;
-  top: 50%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -552,8 +552,8 @@ body.no-scroll {
 
 .diwali-greeting h1 {
   font-family: "Copperplate", "Copperplate Gothic Light", "Times New Roman", serif;
-  font-size: clamp(2.0rem, 5.0vw, 4.2rem);
-  font-weight: 400;
+  font-size: clamp(1.7rem, 3.5vw, 3.5rem);
+  font-weight: 100;
   letter-spacing: 0.22em;
   padding-left: 0.22em;
   margin: 0;
@@ -1106,7 +1106,7 @@ body.no-scroll {
   transform: none;
 }
 
-/* PAGE 2: DIWALI WISHES */
+
 
 .wishes-section {
   min-height: 100vh;
@@ -1129,8 +1129,12 @@ body.no-scroll {
   
   color: #b8860b;
   letter-spacing: 0.4em;
-  font-size: 0.75rem;
-  margin-bottom: 35px;
+  font-size: 0.95rem;
+ font-family: "Montserrat Alternates", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+    margin-bottom: 35px;
+
 }
 
 .wishes-content h1 {
@@ -1144,8 +1148,8 @@ body.no-scroll {
 
 .wishes-content > p:not(.wishes-label) {
   color: #c5a75e;
-  font-size: 0.8rem;
-  
+  font-size: 1.0rem;
+  font-family: "Zeyada", cursive;
   letter-spacing: 0.12em;
   line-height: 2;
   margin-top: 30px;
@@ -1237,14 +1241,31 @@ height: 100vh;
 
 @media (max-width: 600px) {
   .sound-toggle {
-    bottom: calc(20px + env(safe-area-inset-bottom));
-    right: 18px;
+    bottom: calc(40px + env(safe-area-inset-bottom));
+    right: 38px;
     padding: 12px;
-    border-radius: 50%;
+    border-radius: 40%;
   }
 
   .sound-toggle svg {
     width: 21px;
     height: 21px;
+  }
+
+ .diwali-greeting {
+    left: 0 !important;
+    width: 100%;
+    transform: translateY(-50%) !important;
+    text-align: center;
+    top: 45%;
+    white-space: normal;
+  }
+
+  .diwali-greeting h1 {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    letter-spacing: 0.12em;
   }
 }
