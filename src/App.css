@@ -1,4 +1,4 @@
-/* Document setup */
+
 html, body {
   margin: 0;
   padding: 0;
@@ -11,7 +11,7 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Hide default cursor on desktop for custom festive cursor */
+
 @media (hover: hover) and (pointer: fine) {
   body, * {
     cursor: none !important;
@@ -806,9 +806,7 @@ body.no-scroll {
   transform: translateY(0);
 }
 
-/* =========================================
-   PERFECTED QUOTE CARD ALIGNMENT
-   ========================================= */
+
 
 .personal-card {
   position: relative;
@@ -896,9 +894,7 @@ body.no-scroll {
   50% { transform: translateY(6px); }
 }
 
-/* =========================================
-   SECTION 3: THE SACRED FORGE (CREATOR CONSOLE)
-   ========================================= */
+
 
 .forge-section {
   position: relative;
@@ -953,7 +949,6 @@ body.no-scroll {
 }
 
 .forge-header h2 {
-  /* font-family: "Copperplate", "Copperplate Gothic Light", serif; */
   font-family: "Edu QLD Hand", cursive;
 
   font-size: clamp(1.4rem, 4vw, 2.4rem);
@@ -1268,4 +1263,6 @@ height: 100vh;
     text-align: center;
     letter-spacing: 0.12em;
   }
+  
 }
+
