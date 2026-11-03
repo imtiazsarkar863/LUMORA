@@ -24,13 +24,12 @@ function App() {
   const [inputReceiver, setInputReceiver] = useState('');
   const [inputMessage, setInputMessage] = useState('');
   const [copied, setCopied] = useState(false);
-  // const festiveWishes = [
-  //   "May the golden luminescence of this sacred light dispel every shadow from your path and bestow prosperity, vitality, and eternal joy upon your home.",
-  //   "Wishing you an abundance of laughter, golden warmth, and boundless auspicious blessings as we celebrate the festival of lights.",
-  //   "May the triumph of light over darkness guide your aspirations to great heights and illuminate your journey ahead.",
-  //   "Sending you divine peace, glowing health, and the eternal grace of Goddess Lakshmi this auspicious Diwali."
-  // ];
-
+  const scrollToLiveVideo = () => {
+    document.getElementById('live-video')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  };
   const handleShuffleWish = () => {
     const nextWish = festiveWishes[Math.floor(Math.random() * festiveWishes.length)];
     setInputMessage(nextWish);
@@ -47,35 +46,37 @@ function App() {
   };
 
 
-useEffect(() => {
-  if (isDiyaLit) {
-    setTimeout(() => {
-      document.getElementById('golden-wishes')?.scrollIntoView({
-        behavior: 'smooth',
-        duration: 1000,
-        block: 'start'
-      });
-    }, 300);
-  }
-}, [isDiyaLit]);
+  useEffect(() => {
+    if (isDiyaLit) {
+      setTimeout(() => {
+        document.getElementById('golden-wishes')?.scrollIntoView({
+          behavior: 'smooth',
+          duration: 1000,
+          block: 'start'
+        });
+      }, 300);
+    }
+  }, [isDiyaLit]);
   const handleShareWhatsApp = () => {
     const text = `✨ *Happy Diwali!* I have lit a sacred digital Diya especially for you.\n\nOpen your personal light dedication here:\n${generatedShareLink}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  scrollToLiveVideo();
+  window.open(whatsappURL, '_blank');
   };
-const toggleSound = () => {
-  if (!diwaliMusicRef.current) return;
+  const toggleSound = () => {
+    if (!diwaliMusicRef.current) return;
 
-  if (soundOn) {
-    diwaliMusicRef.current.pause();
-    setSoundOn(false);
-  } else {
-    diwaliMusicRef.current.volume = 0.5;
+    if (soundOn) {
+      diwaliMusicRef.current.pause();
+      setSoundOn(false);
+    } else {
+      diwaliMusicRef.current.volume = 0.5;
 
-    diwaliMusicRef.current.play()
-      .then(() => setSoundOn(true))
-      .catch(err => console.log(err));
-  }
-};
+      diwaliMusicRef.current.play()
+        .then(() => setSoundOn(true))
+        .catch(err => console.log(err));
+    }
+  };
   const handleLightDiya = () => {
     if (isDiyaLit) return;
     setIsDiyaLit(true);
@@ -267,7 +268,7 @@ const toggleSound = () => {
         y: -180
       });
 
-     
+
       tl.to('.firecracker', {
         y: window.innerHeight * 0.5,
         duration: 1.15,
@@ -347,9 +348,9 @@ const toggleSound = () => {
       tl.set('.ambient-flash', {
         display: 'none'
       });
-tl.set('.hanging-lights-container', {
-  autoAlpha: 1
-});
+      tl.set('.hanging-lights-container', {
+        autoAlpha: 1
+      });
       tl.set('.mandala-wrapper', {
         display: 'flex',
         '--mask-inner': '50%',
@@ -372,7 +373,7 @@ tl.set('.hanging-lights-container', {
         '<'
       );
 
-     
+
       tl.to('.mandala-wrapper', {
         rotation: 35,
         scale: 1.15,
@@ -388,7 +389,7 @@ tl.set('.hanging-lights-container', {
         display: 'none'
       });
 
-    
+
       tl.set('.diwali-greeting', {
         display: 'block'
       });
@@ -407,7 +408,7 @@ tl.set('.hanging-lights-container', {
           duration: 1.4,
           ease: 'power3.out',
 
-         
+
         }
       );
 
@@ -458,19 +459,19 @@ tl.set('.hanging-lights-container', {
 
         }}
       >
-        
-       {soundOn ? (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ffd700">
-    <path d="M3 9v6h4l5 5V4L7 9H3zm13.59 3 2.12-2.12-1.41-1.41L15.17 11.6l-2.12-2.12-1.41 1.41L13.76 13l-2.12 2.12 1.41 1.41 2.12-2.12 2.12 2.12 1.41-1.41L16.59 13z"/>
-  </svg>) : (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ffd700">
-    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a3.5 3.5 0 0 0-2-3.16v6.32a3.5 3.5 0 0 0 2-3.16zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z"/>
-  </svg>)}
- </button>
+
+        {soundOn ? (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ffd700">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.59 3 2.12-2.12-1.41-1.41L15.17 11.6l-2.12-2.12-1.41 1.41L13.76 13l-2.12 2.12 1.41 1.41 2.12-2.12 2.12 2.12 1.41-1.41L16.59 13z" />
+        </svg>) : (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ffd700">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a3.5 3.5 0 0 0-2-3.16v6.32a3.5 3.5 0 0 0 2-3.16zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z" />
+        </svg>)}
+      </button>
       <audio ref={whistleAudioRef} src="/firecracker-whistle.mp3" preload="auto" />
       <audio ref={boomAudioRef} src="/explosion.mp3" preload="auto" />
       <audio ref={rocketSoundRef} src="/rocket-burst.mp3" preload="auto" />
       <audio ref={diwaliMusicRef} src="/diwali_theme.mp3" preload="auto" loop />
 
-    
+
       <div
         className={`custom-cursor-container ${showMatchstick ? 'mode-match' : 'mode-pointer'} ${isDraggingMatch ? 'active-drag' : ''}`}
         ref={cursorRef}
@@ -492,8 +493,8 @@ tl.set('.hanging-lights-container', {
 
       <div className="ambient-flash"></div>
 
-    
-<div className={`hanging-lights-container ${isDiyaLit ? 'lit' : ''} ${showFinale ? 'hidden' : 'waiting'}`}>        <div className="hanging-lamp lamp-1"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
+
+      <div className={`hanging-lights-container ${isDiyaLit ? 'lit' : ''} ${showFinale ? 'hidden' : 'waiting'}`}>        <div className="hanging-lamp lamp-1"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
         <div className="hanging-lamp lamp-2"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
         <div className="hanging-lamp lamp-3"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
         <div className="hanging-lamp lamp-4"><div className="lamp-chain"></div><div className="lamp-fixture"><div className="lamp-glow"></div><div className="lamp-flame"></div><div className="lamp-cap"></div><div className="lamp-body"></div></div></div>
@@ -506,12 +507,12 @@ tl.set('.hanging-lights-container', {
       <section className="hero-section">
         <div className="intro-text">
           <h1>LUMORA</h1>
-          <br /> 
+          <br />
           <p>A FESTIVAL OF LIGHT</p>
-       
+
         </div>
 
-     
+
         <div className="firecracker">
           <div className="rocket-body">
             <div className="rocket-nozzle"></div>
@@ -536,14 +537,14 @@ tl.set('.hanging-lights-container', {
         </div>
 
         <div className="explosion">
-         
+
 
           <div className="mandala-wrapper">
             <img src="/mandala.png" alt="Diwali Rangoli Mandala" className="mandala-img" />
           </div>
         </div>
 
-        
+
         <div className="diwali-greeting">
           {isPersonalized ? (
             <>
@@ -558,10 +559,10 @@ tl.set('.hanging-lights-container', {
         </div>
       </section>
 
-    
+
       <section className={`next-section ${isDiyaLit ? 'diya-is-lit' : ''}`} ref={nextSectionRef}>
 
-      
+
         <div className="sacred-altar-container">
           <div className={`diya-ambient-glow ${isDiyaLit ? 'lit' : ''}`}></div>
 
@@ -576,7 +577,7 @@ tl.set('.hanging-lights-container', {
               <div className="flame-blue-base"></div>
             </div>
 
-            
+
             <div className="wick-precision-target" ref={wickHitboxRef}></div>
 
             <svg className="diya-svg" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -610,7 +611,7 @@ tl.set('.hanging-lights-container', {
           )}
         </div>
 
-        
+
         <div className={`blessing-text ${isDiyaLit ? 'lit' : ''}`}>
           {urlMsg && (
             <div className="personal-card">
@@ -631,8 +632,8 @@ tl.set('.hanging-lights-container', {
         )}
       </section>
 
-      
-<section id="golden-wishes" className="wishes-section">
+
+      <section id="golden-wishes" className="wishes-section">
 
         <div className="wishes-content">
 
@@ -656,11 +657,11 @@ tl.set('.hanging-lights-container', {
 
       </section>
 
-      
+
       <section className="forge-section">
         <div className="forge-container">
           <div className="forge-header">
-            
+
             <h2>Send a Living Diya </h2>
             <br />
             <br /><br />
@@ -692,17 +693,17 @@ tl.set('.hanging-lights-container', {
                 />
               </div>
             </div>
-
+            <br />
             <div className="input-group">
               <div className="label-with-action">
                 <label>Festive Blessing / Wish</label>
-                <button
+                {/* <button
                   type="button"
                   className="shuffle-wish-btn"
                   onClick={handleShuffleWish}
                 >
                   ✨ Inspire Blessing
-                </button>
+                </button> */}
               </div>
               <textarea
                 rows="3"
@@ -716,7 +717,10 @@ tl.set('.hanging-lights-container', {
               <button
                 type="button"
                 className="btn-primary"
-                onClick={handleCopyLink}
+                onClick={() => {
+                  handleCopyLink();
+                  scrollToLiveVideo();
+                }}
                 disabled={!inputReceiver.trim() && !inputSender.trim()}
               >
                 {copied ? '✓ Personal Link Copied!' : 'Copy Dedication Link'}
@@ -734,8 +738,8 @@ tl.set('.hanging-lights-container', {
           </div>
         </div>
       </section>
-     
-      <section className="finale-section">
+
+      <section id="live-video" className="finale-section">
 
         <video
           className="finale-video"
