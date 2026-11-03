@@ -1221,3 +1221,30 @@ height: 100vh;
   opacity: 0;
   visibility: hidden;
 }
+
+.sound-toggle {
+  position: fixed;
+  bottom: 100px;
+  right: 110px;
+  z-index: 99;
+  padding: 18px 20px;
+  background: transparent;
+  border: 2px solid #ffd700;
+  border-radius: 28px;
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .sound-toggle {
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    right: 18px;
+    padding: 12px;
+    border-radius: 50%;
+  }
+
+  .sound-toggle svg {
+    width: 21px;
+    height: 21px;
+  }
+}

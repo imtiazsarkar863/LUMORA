@@ -60,8 +60,8 @@ function App() {
   const handleShareWhatsApp = () => {
     const text = `✨ *Happy Diwali!* I have lit a sacred digital Diya especially for you.\n\nOpen your personal light dedication here:\n${generatedShareLink}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-  scrollToLiveVideo();
-  window.open(whatsappURL, '_blank');
+    scrollToLiveVideo();
+    window.open(whatsappURL, '_blank');
   };
   const toggleSound = () => {
     if (!diwaliMusicRef.current) return;
@@ -443,21 +443,9 @@ function App() {
   return (
     <div className="page-wrapper">
       <button
+        className="sound-toggle"
         onClick={toggleSound}
-        style={{
-          position: 'fixed',
-          bottom: '100px',
-          right: '110px',
-          zIndex: 99,
-          padding: '18px 20px',
-          background: 'transparent',
-          // color: 'transparent',
-          border: '2px solid #ffd700',
-          borderRadius: '28px',
-          backdropFilter: 'blur(16px)',
-          cursor: 'pointer'
-
-        }}
+        type="button"
       >
 
         {soundOn ? (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px" fill="#ffd700">
