@@ -133,7 +133,7 @@ npm run dev
 
 Open the local URL displayed in your terminal.
 
-## 📦 Production Build
+##  Production Build
 
 To generate an optimized production build:
 
@@ -143,7 +143,7 @@ npm run build
 
 The production-ready files will be generated inside the `dist/` directory.
 
-## ☁️ Deployment
+##  Deployment
 
 LUMORA is deployed using **Firebase Hosting**.
 
@@ -156,13 +156,13 @@ firebase deploy --only hosting
 
 **Live Website:** https://lumora-54307.web.app/
 
-## 🎯 Project Vision
+##  Project Vision
 
 LUMORA explores how modern frontend technologies can transform a traditional cultural celebration into an interactive digital experience.
 
 The goal is simple: bring the magic of Diwali beyond physical lights and celebrations, and make it accessible through a browser.
 
-## 👨‍💻 Developer
+##  Developer
 
 **Imtiaz Sarkar**
 
