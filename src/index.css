@@ -17,3 +17,9 @@ body {
   font-family: Arial, sans-serif;
   overflow-x: hidden;
 }
+@font-face {
+  font-family: 'Copperplate';
+  src: url('./assets/CopperplateCC-Heavy.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
