@@ -693,7 +693,7 @@ function App() {
               </div>
               <textarea
                 rows="3"
-                placeholder="Write your blessing, or tap 'Inspire Blessing' for traditional poetry..."
+                placeholder="Got a wish? Drop it here and let the festive magic do its thing!"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
               />
