@@ -165,8 +165,10 @@ The goal is simple: bring the magic of Diwali beyond physical lights and celebra
 ##  Developer
 
 **Imtiaz Sarkar**
+&
+**Manoswita Datta**
 
-- GitHub: [@imtiazsarkar863](https://github.com/imtiazsarkar863)
+- GitHub: [@imtiazsarkar863](https://github.com/imtiazsarkar863) & [@CipheranoX](https://github.com/CipheranoX)
 - Project: [LUMORA](https://lumora-54307.web.app/)
 
 ---
